@@ -1,0 +1,16 @@
+---
+name: Timeout Failure Simulation
+on: [push]
+  workflow_dispatch: null
+
+jobs:
+  timeout-error:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simulate Timeout Error
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Starting long-running operation..."
+          sleep 120
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [ERROR] Operation timed out after 120 seconds"
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Exiting with status 1"
+          exit 1

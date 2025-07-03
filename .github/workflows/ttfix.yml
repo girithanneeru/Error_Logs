@@ -1,0 +1,92 @@
+name: Smart CI/CD with AutoFix & Root Cause Tagging
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  categorize-failure:
+    name: Detect & Categorize Pipeline Failures
+    runs-on: ubuntu-latest
+    outputs:
+      root_cause: ${{ steps.categorize.outputs.root_cause }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run CI Tests
+        id: test
+        run: |
+          if ! ./run-tests.sh; then
+            echo "status=failed" >> $GITHUB_OUTPUT
+          else
+            echo "status=success" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Categorize Failure
+        id: categorize
+        if: steps.test.outputs.status == 'failed'
+        run: |
+          python tools/failure_categorizer.py > root_cause.json
+          echo "root_cause=$(jq -r '.root_cause' root_cause.json)" >> $GITHUB_OUTPUT
+
+      - name: Upload Root Cause Metadata
+        if: steps.test.outputs.status == 'failed'
+        uses: actions/upload-artifact@v4
+        with:
+          name: root-cause-tag
+          path: root_cause.json
+
+  autofix:
+    name: AutoFix Known Failures
+    runs-on: ubuntu-latest
+    needs: categorize-failure
+    if: contains(fromJson('["infra", "config"]'), needs.categorize-failure.outputs.root_cause)
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download Root Cause Metadata
+        uses: actions/download-artifact@v4
+        with:
+          name: root-cause-tag
+
+      - name: Run AutoFix for Known Issues
+        run: |
+          python tools/autofix_engine.py root_cause.json
+
+      - name: Retry Failed Jobs
+        run: |
+          ./rerun-tests.sh
+
+  notify:
+    name: Notify and Log Root Cause
+    runs-on: ubuntu-latest
+    needs: [categorize-failure, autofix]
+    if: ${{ always() }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download Root Cause Metadata
+        if: needs.categorize-failure.outputs.root_cause != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: root-cause-tag
+
+      - name: Notify Slack
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: 'ci-alerts'
+          slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            {
+              "text": "🔍 Root cause detected: ${{ needs.categorize-failure.outputs.root_cause || 'N/A' }}\n🔧 AutoFix status: ${{ needs.autofix.result || 'skipped' }}"
+            }
+
+      - name: Log to Monitoring System
+        if: needs.categorize-failure.outputs.root_cause != ''
+        run: |
+          curl -X POST https://monitoring.example.com/log \
+            -H "Content-Type: application/json" \
+            -d @root_cause.json

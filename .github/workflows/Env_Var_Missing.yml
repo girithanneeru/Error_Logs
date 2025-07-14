@@ -1,0 +1,18 @@
+---
+name: Environment Variable Missing Simulation - ENV001
+on:
+  workflow_dispatch:
+
+jobs:
+  environment-variable-missing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simulate Environment Variable Missing
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Loading environment variables..."
+          sleep 1
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [ERROR] Required environment variable 'API-TOKEN' not set"
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Fallback: Using default token"
+      - name: Exit with Success
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Exiting with status 0"

@@ -1,0 +1,35 @@
+---
+name: SSL Handshake Failure Simulation - SSL501
+on:
+  workflow_dispatch:
+
+jobs:
+  ssl-handshake-failure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simulate SSL Handshake Failure with Retry
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Initiating secure connection to 'api.internal.com'..."
+          RETRY_COUNT=0
+          MAX_RETRIES=2
+          while true; do
+            if [ $RETRY_COUNT -gt 0 ]; then
+              echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [WARNING] SSL handshake failed. Retrying ($RETRY_COUNT/$MAX_RETRIES)..."
+            fi
+            if [ $((RANDOM % 2)) -eq 0 ]; then
+              echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] SSL connection established successfully."
+              break
+            else
+              echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [ERROR] SSL handshake failed: certificate verify failed"
+              RETRY_COUNT=$((RETRY_COUNT + 1))
+              if [ $RETRY_COUNT -gt $MAX_RETRIES ]; then
+                echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [ERROR] SSL connection failed after $MAX_RETRIES retries."
+                echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Exiting with status 1"
+                exit 1
+              fi
+              sleep 2
+            fi
+          done
+      - name: Exit with Success
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Exiting with status 0"

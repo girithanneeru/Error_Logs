@@ -1,0 +1,18 @@
+---
+name: Signal Interrupt Simulation - SIGINT
+on:
+  workflow_dispatch:
+
+jobs:
+  signal-interrupt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simulate Signal Interrupt
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Launching background process..."
+          sleep 7
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [WARNING] Received interrupt signal (SIGINT)"
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Fallback: Gracefully shut down process"
+      - name: Exit with Success
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Exiting with status 0"

@@ -1,0 +1,18 @@
+---
+name: CI Job Timeout Simulation - JOBTM01
+on:
+  workflow_dispatch:
+
+jobs:
+  ci-job-timeout:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simulate CI Job Timeout
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Starting CI pipeline job #481..."
+          sleep 10
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [ERROR] CI job exceeded maximum allowed duration (3600 seconds)"
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Fallback: Reduced job scope to complete"
+      - name: Exit with Success
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Exiting with status 0"

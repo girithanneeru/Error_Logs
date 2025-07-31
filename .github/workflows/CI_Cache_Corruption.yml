@@ -1,0 +1,18 @@
+---
+name: CI Cache Corruption Simulation - CACHE01
+on:
+  workflow_dispatch:
+
+jobs:
+  ci-cache-corruption:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simulate CI Cache Corruption
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Restoring CI cache for job 'build#892'..."
+          sleep 1
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [ERROR] Restored cache is corrupted: checksum mismatch"
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Fallback: Rebuilt cache"
+      - name: Exit with Success
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Exiting with status 0"

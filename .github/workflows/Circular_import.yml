@@ -1,0 +1,18 @@
+---
+name: Circular Import Detected Simulation - CIRC001
+on:
+  workflow_dispatch:
+
+jobs:
+  circular-import-detected:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simulate Circular Import Detected
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Importing module 'utils.parser'..."
+          sleep 1
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [ERROR] CircularImportError: Detected circular import between 'utils.parser' and 'core.init'"
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Fallback: Restructured module imports"
+      - name: Exit with Success
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Exiting with status 0"

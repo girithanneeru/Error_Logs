@@ -1,0 +1,18 @@
+---
+name: Broken Pipe Simulation - PIPEBROK
+on:
+  workflow_dispatch:
+
+jobs:
+  broken-pipe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simulate Broken Pipe
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Sending data to socket..."
+          sleep 2
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [ERROR] BrokenPipeError: write to closed pipe/socket"
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Fallback: Reopened socket"
+      - name: Exit with Success
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Exiting with status 0"

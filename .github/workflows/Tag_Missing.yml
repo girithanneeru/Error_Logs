@@ -1,0 +1,18 @@
+---
+name: Tag Missing Simulation - GITTAG
+on:
+  workflow_dispatch:
+
+jobs:
+  tag-missing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simulate Tag Missing
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Deploying release v2.5..."
+          sleep 1
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [ERROR] Required git tag 'v2.5' not found"
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Fallback: Using latest commit"
+      - name: Exit with Success
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Exiting with status 0"

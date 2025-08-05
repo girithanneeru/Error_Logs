@@ -1,0 +1,18 @@
+---
+name: Module Import Error Simulation - MODIMP
+on:
+  workflow_dispatch:
+
+jobs:
+  module-import-error:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simulate Module Import Error
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Starting Python script..."
+          sleep 1
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [ERROR] ModuleNotFoundError: No module named 'requests'"
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Fallback: Installed missing module"
+      - name: Exit with Success
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Exiting with status 0"

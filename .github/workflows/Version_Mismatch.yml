@@ -1,0 +1,18 @@
+---
+name: Version Mismatch Simulation - VERCOMP
+on:
+  workflow_dispatch:
+
+jobs:
+  version-mismatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simulate Version Mismatch
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Launching service with plugin version 3.1.0"
+          sleep 1
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [ERROR] Version mismatch: core service requires plugin version >=3.5.0"
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Fallback: Updated plugin to compatible version"
+      - name: Exit with Success
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Exiting with status 0"

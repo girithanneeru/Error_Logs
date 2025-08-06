@@ -1,0 +1,18 @@
+---
+name: Archive Extract Failure Simulation - UNZIP001
+on:
+  workflow_dispatch:
+
+jobs:
+  archive-extract-failure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simulate Archive Extract Failure
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Extracting archive 'build_artifacts.zip'..."
+          sleep 3
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [ERROR] ZipError: cannot extract archive - invalid or corrupted file"
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Fallback: Used alternative archive"
+      - name: Exit with Success
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Exiting with status 0"

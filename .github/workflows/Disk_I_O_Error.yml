@@ -1,0 +1,18 @@
+---
+name: Disk I/O Error Simulation - DISKIO
+on:
+  workflow_dispatch:
+
+jobs:
+  disk-io-error:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simulate Disk I/O Error
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Writing data to disk..."
+          sleep 3
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [ERROR] I/O error: failed to write data block to disk"
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Fallback: Retried write operation"
+      - name: Exit with Success
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Exiting with status 0"

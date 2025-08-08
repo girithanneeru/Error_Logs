@@ -1,0 +1,30 @@
+---
+name: Environment Variable Missing Simulation - ENV001
+on:
+  workflow_dispatch:
+
+jobs:
+  environment-variable-missing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simulate Environment Variable Missing
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Loading environment variables..."
+          sleep 1
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [ERROR] Required environment variable 'API-TOKEN' not set"
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Fallback: Using default token"
+      - name: Exit with Success
+        run: |
+          echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [INFO] Exiting with status 0"
+
+rules:
+  - match: "npm ERR!"
+    fix: "npm cache clean --force && npm install"
+  - match: "ModuleNotFoundError"
+    fix: "pip install -r requirements.txt"
+  - match: "EADDRINUSE"
+    fix: "killall node"
+  - match: "command not found"
+    fix: "echo 'Install missing CLI tool manually'"
+  - match: "Failed to compile"
+    fix: "Check for syntax errors or missing dependencies"
